@@ -1,6 +1,5 @@
 #include <Time.h>
 #include "RTClib.h"
-#include <EEPROM.h>
 
 #define PIN_TUBE_HOUR_x0 PD5 //hardware 9 - arduino 5
 #define PIN_TUBE_HOUR_0x PD4 //hardware 2 - arduino 4
@@ -34,25 +33,19 @@ void setup() {
   RTC.use_summertime_EU = true;
   // put your setup code here, to run once:
   DDRB = 0b00000001; // PB0 is used
-  DDRC = 0b00001111; // PC0 - PC5 are used
+  DDRC = 0b11111111; // PC0 - PC5 are used
   DDRD = 0b00111111; // PD0 - PD5 are used
 
 // initialize the button pin as a input:
   pinMode(PB0, INPUT);
   
-  RTC_setup = EEPROM.read(address);
-  
-  if (/*(RTC.lostPower()) &&*/ (RTC_setup == 0x00)) {
-    //Serial.println("RTC lost power, lets set the time!");
-    // following line sets the RTC to the date & time this sketch was compiled
-    RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    // This line sets the RTC with an explicit date & time, for example to set
-    // January 21, 2014 at 3am you would call:
-    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
+  //Serial.println("RTC lost power, lets set the time!");
+  // following line sets the RTC to the date & time this sketch was compiled
+  RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  // This line sets the RTC with an explicit date & time, for example to set
+  // January 21, 2014 at 3am you would call:
+  // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
 
-    RTC_setup = 0x01;
-    EEPROM.write(address, RTC_setup);
-  }
 
   cli();//stop interrupts
   //set timer1 interrupt at 1Hz
@@ -178,18 +171,18 @@ void loop()
 
 
   //PIN_TUBE_SEC_0x
-  display_clock(PD0, (now.second())%10); 
+  display_clock(PD0, counter/*(now.second())%10*/); 
   //PIN_TUBE_SEC_x0
-  display_clock(PD1, (now.second())/10);
+  display_clock(PD1, counter/*(now.second())/10*/);
 
   //PIN_TUBE_MIN_0x
-  display_clock(PD2, (now.minute())%10);
+  display_clock(PD2, counter/*(now.minute())%10*/);
   //PIN_TUBE_MIN_x0
-  display_clock(PD3, (now.minute())/10);
+  display_clock(PD3, counter/*(now.minute())/10*/);
 
   //PIN_TUBE_HOUR_0x
-  display_clock(PD4, (now.hour())%10);
+  display_clock(PD4, counter/*(now.hour())%10*/);
   //PIN_TUBE_HOUR_x0
-  display_clock(PD5, (now.hour())/10);
+  display_clock(PD5, counter/*(now.hour())/10*/);
 }
   
