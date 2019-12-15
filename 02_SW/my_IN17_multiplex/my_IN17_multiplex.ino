@@ -41,68 +41,12 @@ void setup() {
   
   //Serial.println("RTC lost power, lets set the time!");
   // following line sets the RTC to the date & time this sketch was compiled
-  RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  //RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));
   // This line sets the RTC with an explicit date & time, for example to set
   // January 21, 2014 at 3am you would call:
   // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
 
-
-  cli();//stop interrupts
-  //set timer1 interrupt at 1Hz
-  TCCR1A = 0;// set entire TCCR1A register to 0
-  TCCR1B = 0;// same for TCCR1B
-  TCNT1  = 0;//initialize counter value to 0
-  // set compare match register for 1hz increments
-  OCR1A = 15624;// = (16*10^6) / (1*1024) - 1 (must be <65536)
-  // turn on CTC mode
-  TCCR1B |= (1 << WGM12);
-  // Set CS12 and CS10 bits for 1024 prescaler
-  TCCR1B |= (1 << CS12) | (1 << CS10);  
-  // enable timer compare interrupt
-  TIMSK1 |= (1 << OCIE1A);
-
-  sei();//allow interrupts
-
   delay(500);
-}
-
-void(* resetFunc) (void) = 0;//declare reset function at address 0
-
-void switch_Winter_Summer_Hour()
-{
-  int local_hour = 0;
-  // read the pushbutton input pin:
-  buttonState = digitalRead(PB0);
-
-  // compare the buttonState to its previous state
-  if (buttonState != lastButtonState) {
-    // if the state has changed, increment the counter
-    local_hour = now.hour();
-    if (buttonState == HIGH) 
-    {
-      // if the current state is LOW then the button went from on to off:
-      local_hour++;
-    } 
-    else 
-    {
-      // if the current state is LOW then the button went from on to off:
-      local_hour--;
-    }
-    RTC.adjust(
-      DateTime(
-        now.year(),
-        now.month(),
-        now.day(),
-        local_hour, 
-        now.minute(), 
-        now.second()
-        ));// Format: YYYY,MM,DD,HH,MM,SS
- resetFunc();  //call reset 
-    // Delay a little bit to avoid bouncing
-    delay(50);
-  }
-  // save the current state as the last state, for next time through the loop
-  lastButtonState = buttonState;
 }
 
 int counter = 0;
@@ -171,18 +115,18 @@ void loop()
 
 
   //PIN_TUBE_SEC_0x
-  display_clock(PD0, counter/*(now.second())%10*/); 
+  display_clock(PD0, (now.second())%10); 
   //PIN_TUBE_SEC_x0
-  display_clock(PD1, counter/*(now.second())/10*/);
+  display_clock(PD1, (now.second())/10);
 
   //PIN_TUBE_MIN_0x
-  display_clock(PD2, counter/*(now.minute())%10*/);
+  display_clock(PD2, (now.minute())%10);
   //PIN_TUBE_MIN_x0
-  display_clock(PD3, counter/*(now.minute())/10*/);
+  display_clock(PD3, (now.minute())/10);
 
   //PIN_TUBE_HOUR_0x
-  display_clock(PD4, counter/*(now.hour())%10*/);
+  display_clock(PD4, (now.hour())%10);
   //PIN_TUBE_HOUR_x0
-  display_clock(PD5, counter/*(now.hour())/10*/);
+  display_clock(PD5, (now.hour())/10);
 }
   
